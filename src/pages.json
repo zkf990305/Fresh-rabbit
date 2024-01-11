@@ -1,6 +1,6 @@
 {
-   // 组件自动导入
-   "easycom": {
+  // 组件自动导入
+  "easycom": {
     "autoscan": true,
     "custom": {
       // uni-ui 规则如下配置
@@ -12,6 +12,8 @@
     {
       "path": "pages/index/index",
       "style": {
+        "navigationStyle": "custom", // 隐藏默认导航
+        "navigationBarTextStyle": "white",
         "navigationBarTitleText": "首页"
       }
     },
