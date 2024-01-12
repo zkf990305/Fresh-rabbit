@@ -6,6 +6,7 @@ import HotPanel from './components/HotPanel.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
+import type { XtxGuessInstance } from '@/types/component'
 
 const bannerList = ref<BannerItem[]>([])
 
@@ -32,6 +33,13 @@ onLoad(() => {
   getHomeCategoryData()
   getHomeHotData()
 })
+// 猜你喜欢组件的引用
+const guessRef = ref<XtxGuessInstance>()
+// 触底事件
+const onScrolltolower = () => {
+  // console.log('触底了')
+  guessRef.value?.getMore()
+}
 </script>
 
 <template>
@@ -45,7 +53,7 @@ onLoad(() => {
   </uni-card> -->
   <!-- 自定义导航栏 -->
   <CustomNavbar />
-  <scroll-view class="scroll-view" scroll-y>
+  <scroll-view @scrolltolower="onScrolltolower" class="scroll-view" scroll-y>
     <!-- 自定义轮播图 -->
     <XtxSwiper :list="bannerList" />
     <!-- 分类面板 -->
@@ -53,7 +61,7 @@ onLoad(() => {
     <!-- 热门推荐 -->
     <HotPanel :list="hotList" />
     <!-- 猜你喜欢 -->
-    <XtxGuess />
+    <XtxGuess ref="guessRef" />
   </scroll-view>
 
   <view class="index">index</view>
