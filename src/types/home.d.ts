@@ -21,9 +21,9 @@ export type CategoryItem = {
 /** 首页-热门推荐数据类型 */
 export type HotItem = {
   /** 推荐说明 */
-  alt: String
+  alt: string
   /** id */
-  id: String
+  id: string
   /** 图片集合[ 图片路径 ] */
   pictures: string[]
   /** 跳转地址 */
