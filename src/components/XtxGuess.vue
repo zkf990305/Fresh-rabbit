@@ -6,7 +6,7 @@ import { onMounted, ref, watch } from 'vue'
 
 // 猜你喜欢分页参数
 const pageParams: Required<PageParams> = {
-  page: 31,
+  page: 1,
   pageSize: 10,
 }
 // 猜你喜欢数据
@@ -46,6 +46,17 @@ const getHomeGoodsGuessLikeData = async () => {
     finish.value = true
   }
 }
+
+// 重置数据
+const resetData = () => {
+  // 重置页码
+  pageParams.page = 1
+  // 重置数据
+  guessList.value = []
+  // 重置加载状态
+  finish.value = false
+}
+
 // 组件挂载完毕后，获取猜你喜欢数据
 onMounted(() => {
   getHomeGoodsGuessLikeData()
@@ -53,6 +64,7 @@ onMounted(() => {
 
 // 暴露给父组件的方法
 defineExpose({
+  resetData,
   getMore: getHomeGoodsGuessLikeData,
 })
 </script>
