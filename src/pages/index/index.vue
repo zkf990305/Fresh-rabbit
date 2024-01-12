@@ -8,24 +8,26 @@ import { ref } from 'vue'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import type { XtxGuessInstance } from '@/types/component'
 
+// 轮播图数据
 const bannerList = ref<BannerItem[]>([])
 
 const getHomeBannerData = async () => {
   const res = await getHomeBannerAPI()
-  console.log(res)
+  // console.log(res)
   bannerList.value = res.result
 }
-
+// 分类面板数据
 const categoryList = ref<CategoryItem[]>([])
 const getHomeCategoryData = async () => {
   const res = await getHomeCategoryAPI()
-  console.log(res)
+  // console.log(res)
   categoryList.value = res.result
 }
+// 热门推荐数据
 const hotList = ref<HotItem[]>([])
 const getHomeHotData = async () => {
   const res = await getHomeHotAPI()
-  console.log(res)
+  // console.log(res)
   hotList.value = res.result
 }
 onLoad(() => {
@@ -40,6 +42,19 @@ const onScrolltolower = () => {
   // console.log('触底了')
   guessRef.value?.getMore()
 }
+const isTriggered = ref(false)
+// 自定义下拉刷新事件
+const onRefresherrefresh = async () => {
+  // 开始动画
+  isTriggered.value = true
+  // await getHomeBannerData()
+  // await getHomeCategoryData()
+  // await getHomeHotData()
+
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  // 结束动画
+  isTriggered.value = false
+}
 </script>
 
 <template>
@@ -53,7 +68,14 @@ const onScrolltolower = () => {
   </uni-card> -->
   <!-- 自定义导航栏 -->
   <CustomNavbar />
-  <scroll-view @scrolltolower="onScrolltolower" class="scroll-view" scroll-y>
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTriggered"
+    @scrolltolower="onScrolltolower"
+    class="scroll-view"
+    scroll-y
+  >
     <!-- 自定义轮播图 -->
     <XtxSwiper :list="bannerList" />
     <!-- 分类面板 -->
