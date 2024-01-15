@@ -33,6 +33,11 @@ const onTapImage = (url: string) => {
     urls: goods.value!.mainPictures,
   })
 }
+// uni-ui 保存弹出层组件实例
+const popup = ref<{
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
 // 页面加载
 onLoad(() => {
   getGoodsByIdData()
@@ -77,7 +82,7 @@ onLoad(() => {
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
-        <view class="item arrow">
+        <view @tap="popup?.open('top')" class="item arrow">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮 </text>
         </view>
@@ -147,6 +152,11 @@ onLoad(() => {
       <view class="buynow"> 立即购买 </view>
     </view>
   </view>
+  <!-- uni-popup 弹出层 -->
+  <uni-popup ref="popup" background-color="#fff" type="bottom">
+    <view>内容1</view>
+    <button @tap="popup?.close">关闭弹出层</button>
+  </uni-popup>
 </template>
 
 <style lang="scss">
