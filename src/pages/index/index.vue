@@ -37,9 +37,7 @@ const isLoading = ref(false)
 onLoad(async () => {
   isLoading.value = true
   await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
-  // getHomeBannerData()
-  // getHomeCategoryData()
-  // getHomeHotData()
+
   isLoading.value = false
 })
 // 猜你喜欢组件的引用
@@ -54,30 +52,15 @@ const isTriggered = ref(false)
 const onRefresherrefresh = async () => {
   // 开始动画
   isTriggered.value = true
-  // await getHomeBannerData()
-  // await getHomeCategoryData()
-  // await getHomeHotData()
+  // 重置猜你喜欢组件数据
   guessRef.value?.resetData()
-  await Promise.all([
-    getHomeBannerData(),
-    getHomeCategoryData(),
-    getHomeHotData(),
-    guessRef.value?.getMore(),
-  ])
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
   // 结束动画
   isTriggered.value = false
 }
 </script>
 
 <template>
-  <!-- <uni-card
-    title="基础卡片"
-    sub-title="副标题"
-    extra="额外信息"
-    thumbnail="https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png"
-  >
-    <text>这是一个带头像和双标题的基础卡片，此示例展示了一个完整的卡片。</text>
-  </uni-card> -->
   <!-- 自定义导航栏 -->
   <CustomNavbar />
   <scroll-view
@@ -100,8 +83,6 @@ const onRefresherrefresh = async () => {
       <XtxGuess ref="guessRef" />
     </template>
   </scroll-view>
-
-  <view class="index">index</view>
 </template>
 
 <style lang="scss">
@@ -112,6 +93,7 @@ page {
   display: flex;
   flex-direction: column;
 }
+
 .scroll-view {
   flex: 1;
 }
