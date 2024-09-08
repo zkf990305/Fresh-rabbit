@@ -32,3 +32,20 @@ export type ProfileDetail = BaseProfile & {
 }
 // 定义一个类型别名Gender，它只能是'女'或'男'
 export type Gender = '女' | '男'
+
+/**
+ * 定义了一个名为ProfileParams的类型，该类型是从ProfileDetail类型中选择nickname、gender、birthday和profession属性，
+ * 并且可选地包含provinceCode、cityCode和countyCode属性。
+ * 这个类型用于简化和标准化用户资料相关接口的参数处理。
+ */
+export type ProfileParams = Pick<
+  ProfileDetail,
+  'nickname' | 'gender' | 'birthday' | 'profession'
+> & {
+  // 省份编码
+  provinceCode?: string
+  // 城市编码
+  cityCode?: string
+  // 区/县编码
+  countyCode?: string
+}
