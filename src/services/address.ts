@@ -27,3 +27,28 @@ export const getMemberAddressAPI = () => {
     url: '/member/address',
   })
 }
+
+/**
+ * 删除会员地址信息的API
+ * @param id 地址ID
+ * @returns {Promise<void>} 一个Promise，不包含返回值
+ */
+export const getMemberAddressByIdAPI = (id: string) => {
+  return http<AddressParams>({
+    method: 'GET',
+    url: `/member/address/${id}`,
+  })
+}
+
+/**
+ * 修改收货地址
+ * @param id 地址id(路径参数)
+ * @param data 表单数据(请求体参数)
+ */
+export const putMemberAddressByIdAPI = (id: string, data: AddressParams) => {
+  return http({
+    method: 'PUT',
+    url: `/member/address/${id}`,
+    data,
+  })
+}
