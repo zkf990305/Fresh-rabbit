@@ -73,3 +73,21 @@ export const putMemberCartBySkuIdAPI = (
     data,
   })
 }
+
+/**
+ * 更新会员购物车中商品的选中状态 购物车全选/取消全选
+ *
+ * 该函数通过发送PUT请求来更新会员购物车中商品的选中状态它接受一个包含选中状态的数据对象作为参数，
+ * 并使用HTTP请求库发送请求到指定的API端点该函数主要用于在前端修改购物车商品的选中状态时，
+ * 同步更新后端服务器上的数据
+ *
+ * @param data 包含选中状态的数据对象   selected 是否选中
+ * @returns 返回一个Promise对象，表示HTTP请求的状态
+ */
+export const putMemberCartSelectedAPI = (data: { selected: boolean }) => {
+  return http({
+    method: 'PUT',
+    url: '/member/cart/selected',
+    data,
+  })
+}
