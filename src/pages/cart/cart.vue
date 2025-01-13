@@ -196,7 +196,11 @@ onShow(() => {
         <text class="text">合计:</text>
         <text class="amount">{{ selectedAmount }}</text>
         <view class="button-grounp">
-          <view @tap="onPayment" class="button payment-button" :class="{ disabled: true }">
+          <view
+            @tap="onPayment"
+            class="button payment-button"
+            :class="{ disabled: selectedCount === 0 }"
+          >
             去结算({{ selectedCount }})
           </view>
         </view>
