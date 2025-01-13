@@ -77,6 +77,44 @@ const onChangeSelectedAll = () => {
   putMemberCartSelectedAPI({ selected: _isSelectedAll })
 }
 
+// 计算选中的商品列表
+const selectedCardList = computed(() => {
+  return cartList.value.filter((v) => v.selected)
+})
+
+// 计算选中商品的总金额
+const selectedAmount = computed(() => {
+  return selectedCardList.value
+    .reduce((prev, cur) => {
+      return prev + cur.nowPrice * cur.count
+    }, 0)
+    .toFixed(2)
+})
+
+// 计算选中总件数
+const selectedCount = computed(() => {
+  return selectedCardList.value.reduce((prev, cur) => {
+    return prev + cur.count
+  }, 0)
+})
+
+// 结算按钮
+const onPayment = () => {
+  if (selectedCount.value === 0) {
+    uni.showToast({
+      title: '请选择商品',
+      icon: 'none',
+    })
+    return
+  }
+  uni.showToast({
+    title: '跳转结算页面',
+    icon: 'none',
+  })
+  // 跳转到结算页
+  // uni.navigateTo({ url: '/pagesOrder/create/create' })
+}
+
 /**
  * 页面加载时调用
  * 在页面加载时调用 getMemberCartListData 函数，以获取会员的购物车列表数据
@@ -156,9 +194,11 @@ onShow(() => {
       <view class="toolbar">
         <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
-        <text class="amount">100</text>
+        <text class="amount">{{ selectedAmount }}</text>
         <view class="button-grounp">
-          <view class="button payment-button" :class="{ disabled: true }"> 去结算(10) </view>
+          <view @tap="onPayment" class="button payment-button" :class="{ disabled: true }">
+            去结算({{ selectedCount }})
+          </view>
         </view>
       </view>
     </template>
