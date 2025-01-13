@@ -46,3 +46,30 @@ export const deleteMemberCartAPI = (data: { ids: string[] }) => {
     data,
   })
 }
+
+/**
+ * 更新会员购物车中的商品信息
+ *
+ * 该函数通过发送PUT请求来更新会员购物车中特定商品的选中状态和数量
+ * 主要用于在前端修改购物车商品信息时，同步更新后端购物车数据
+ *
+ * @param skuId 商品SKU ID，用于标识购物车中的具体商品
+ * @param data 包含商品选中状态和数量的对象
+ * - selected 商品是否被选中，用于更新购物车商品的选中状态
+ * - count 商品数量，用于更新购物车商品的数量
+ *
+ * 注意：该函数定义中未明确指定返回值类型，应根据实际API返回的数据结构来确定
+ */
+export const putMemberCartBySkuIdAPI = (
+  skuId: string,
+  data: {
+    selected?: boolean
+    count?: number
+  },
+) => {
+  return http({
+    method: 'PUT',
+    url: `/member/cart/${skuId}`,
+    data,
+  })
+}
