@@ -112,7 +112,7 @@ const onPayment = () => {
     icon: 'none',
   })
   // 跳转到结算页
-  // uni.navigateTo({ url: '/pagesOrder/create/create' })
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 
 /**
