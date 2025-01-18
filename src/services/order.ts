@@ -16,3 +16,27 @@ export const getMemberOrderPreAPI = () => {
     url: '/member/order/pre',
   })
 }
+
+/**
+ * 填写订单-获取立即购买订单
+ *
+ * 此函数用于在会员下单前，根据商品SKU ID、商品数量和可选的地址ID，
+ * 获取订单的预览信息这些信息帮助会员确认订单详情，如商品、数量、地址等
+ *
+ * @param data 包含请求参数的对象
+ * @param data.skuId 商品SKU ID，用于标识特定的商品配置
+ * @param data.count 商品数量，表示希望购买的数量
+ * @param data.addressId 可选参数，会员的地址ID，用于预览中显示配送地址信息
+ * @returns 返回一个Promise对象，解析为OrderPreResult类型的数据，包含订单预览的信息
+ */
+export const getMemberOrderPreNowAPI = (data: {
+  skuId: string
+  count: string
+  addressId?: string
+}) => {
+  return http<OrderPreResult>({
+    method: 'GET',
+    url: '/member/order/pre/now',
+    data,
+  })
+}
