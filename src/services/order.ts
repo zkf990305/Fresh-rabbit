@@ -1,4 +1,4 @@
-import type { OrderPreResult } from '@/types/order'
+import type { OrderPreResult, OrderCreateParams, OrderCreateResult } from '@/types/order'
 import { http } from '@/utils/http'
 
 /**
@@ -37,6 +37,23 @@ export const getMemberOrderPreNowAPI = (data: {
   return http<OrderPreResult>({
     method: 'GET',
     url: '/member/order/pre/now',
+    data,
+  })
+}
+
+/**
+ * 创建会员订单的API请求函数
+ *
+ * 该函数通过发送POST请求到/member/order接口，根据传入的订单参数创建一个新的订单
+ * 主要用于在前端应用中创建订单并获取服务器返回的订单创建结果
+ *
+ * @param data 订单创建参数，包含创建订单所需的信息，如商品ID、购买数量等
+ * @returns 返回一个Promise对象，解析为订单创建结果，包括订单ID、创建状态等信息
+ */
+export const postMemberOrderAPI = (data: OrderCreateParams) => {
+  return http<OrderCreateResult>({
+    method: 'POST',
+    url: '/member/order',
     data,
   })
 }
