@@ -5,6 +5,7 @@ import { onReady, onLoad } from '@dcloudio/uni-app'
 import { OrderState, orderStateList } from '@/services/constants'
 import { getMemberOrderByIdAPI } from '@/services/order'
 import type { OrderResult } from '@/types/order'
+import PageSkeleton from './components/PageSkeleton.vue'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 猜你喜欢

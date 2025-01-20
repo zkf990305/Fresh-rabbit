@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useAddressStore } from '@/stores/modules/address'
-import { getMemberOrderPreAPI, getMemberOrderPreNowAPI, postMemberOrderAPI } from '@/services/order'
+import {
+  getMemberOrderPreAPI,
+  getMemberOrderPreNowAPI,
+  postMemberOrderAPI,
+  getMemberOrderRepurchaseByIdAPI,
+} from '@/services/order'
 import type { OrderPreResult } from '@/services/order'
 import { onLoad } from '@dcloudio/uni-app'
 
@@ -28,6 +33,7 @@ const onChangeDelivery: UniHelper.SelectorPickerOnChange = (ev) => {
 const pageParams = defineProps<{
   skuId?: string
   count?: string
+  orderId?: string
 }>()
 
 // 获取订单信息
@@ -40,6 +46,10 @@ const getMemberOrderPreData = async () => {
       skuId: pageParams.skuId,
       count: pageParams.count,
     })
+    orderPre.value = res.result
+  } else if (pageParams.orderId) {
+    // 再次购买
+    const res = await getMemberOrderRepurchaseByIdAPI(pageParams.orderId)
     orderPre.value = res.result
   } else {
     // 获取购物车数据
