@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { OrderState } from '@/services/constants'
 import { orderStateList } from '@/services/constants'
-import { getMemberOrderAPI } from '@/services/order'
+import {
+  getMemberOrderAPI,
+  putMemberOrderReceiptByIdAPI,
+  deleteMemberOrderAPI,
+} from '@/services/order'
+import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 import type { OrderItem } from '@/types/order'
 import type { OrderListParams } from '@/types/order'
 import { onMounted, ref } from 'vue'
@@ -53,6 +58,54 @@ onMounted(() => {
   getMemberOrderData()
 })
 
+// 订单支付
+const onOrderPay = async (id: string) => {
+  if (import.meta.env.DEV) {
+    // 开发环境模拟支付
+    await getPayMockAPI({ orderId: id })
+  } else {
+    // 正式环境微信支付
+    const res = await getPayWxPayMiniPayAPI({ orderId: id })
+    wx.requestPayment(res.result)
+  }
+  // 成功提示
+  uni.showToast({ title: '支付成功' })
+  // 更新订单状态
+  const order = orderList.value.find((v) => v.id === id)
+  order!.orderState = OrderState.DaiFaHuo
+}
+
+// 确认收货
+const onOrderConfirm = (id: string) => {
+  uni.showModal({
+    content: '为保障您的权益，请收到货并确认无误后，再确认收货',
+    success: async ({ confirm }) => {
+      if (confirm) {
+        await putMemberOrderReceiptByIdAPI(id)
+        uni.showToast({ icon: 'success', title: '确认收货成功' })
+        // 确认成功，更新为待评价
+        const order = orderList.value.find((v) => v.id === id)
+        order!.orderState = OrderState.DaiPingJia
+      }
+    },
+  })
+}
+
+// 删除订单
+const onOrderDelete = (id: string) => {
+  uni.showModal({
+    content: '你确定要删除该订单？',
+    success: async (res) => {
+      if (res.confirm) {
+        await deleteMemberOrderAPI({ ids: [id] })
+        // 删除成功，界面中删除订单
+        const index = orderList.value.findIndex((v) => v.id === id)
+        orderList.value.splice(index, 1)
+      }
+    },
+  })
+}
+
 // 是否分页结束
 const isFinish = ref(false)
 // 是否触发下拉刷新
@@ -89,7 +142,11 @@ const onRefresherrefresh = async () => {
         <!-- 订单状态文字 -->
         <text>{{ orderStateList[order.orderState].text }}</text>
         <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
-        <text v-if="order.orderState >= OrderState.DaiPingJia" class="icon-delete"></text>
+        <text
+          v-if="order.orderState >= OrderState.DaiPingJia"
+          class="icon-delete"
+          @tap="onOrderDelete(order.id)"
+        ></text>
       </view>
       <!-- 商品信息，点击商品跳转到订单详情，不是商品详情 -->
       <navigator
@@ -117,18 +174,21 @@ const onRefresherrefresh = async () => {
       <view class="action">
         <!-- 待付款状态：显示去支付按钮 -->
         <template v-if="order.orderState === OrderState.DaiFuKuan">
-          <view class="button primary">去支付</view>
+          <view class="button primary" @tap="onOrderPay(order.id)">去支付</view>
         </template>
         <template v-else>
           <navigator
             class="button secondary"
-            :url="`/pagesOrder/create/create?orderId=id`"
+            :url="`/pagesOrder/create/create?orderId=${order.id}`"
             hover-class="none"
           >
             再次购买
           </navigator>
           <!-- 待收货状态: 展示确认收货 -->
-          <view v-if="order.orderState === OrderState.DaiShouHuo" class="button primary"
+          <view
+            v-if="order.orderState === OrderState.DaiShouHuo"
+            class="button primary"
+            @tap="onOrderConfirm(order.id)"
             >确认收货</view
           >
         </template>
