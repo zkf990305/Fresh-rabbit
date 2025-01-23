@@ -3,7 +3,11 @@ import { useGuessList } from '@/composables'
 import { ref } from 'vue'
 import { onReady, onLoad } from '@dcloudio/uni-app'
 import { OrderState, orderStateList } from '@/services/constants'
-import { getMemberOrderByIdAPI } from '@/services/order'
+import {
+  getMemberOrderByIdAPI,
+  getMemberOrderConsignmentByIdAPI,
+  putMemberOrderReceiptByIdAPI,
+} from '@/services/order'
 import type { OrderResult } from '@/types/order'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
@@ -104,6 +108,46 @@ const onOrderPay = async () => {
   // 关闭当前页，再跳转支付结果页
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
 }
+
+// 是否为开发环境
+const isDev = import.meta.env.DEV
+// 模拟发货
+const onOrderSend = async () => {
+  if (isDev) {
+    await getMemberOrderConsignmentByIdAPI(query.id)
+    uni.showToast({ icon: 'success', title: '模拟发货完成' })
+    // 主动更新订单状态
+    order.value!.orderState = OrderState.DaiShouHuo
+  }
+}
+
+// 确认收货
+const onOrderConfirm = () => {
+  // 验证 query.id 是否有效
+  if (!query.id) {
+    uni.showToast({
+      title: '订单ID无效',
+      icon: 'none',
+    })
+    return
+  }
+  uni.showModal({
+    content: '为保障您的权益，请收到货并确认无误后，再确认收货',
+
+    success: async ({ confirm }) => {
+      if (confirm) {
+        const res = await putMemberOrderReceiptByIdAPI(query.id)
+        // 更新订单状态
+        order.value = res.result
+        // 成功提示
+        uni.showToast({
+          title: '确认收货成功',
+          icon: 'success',
+        })
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -154,7 +198,21 @@ const onOrderPay = async () => {
               再次购买
             </navigator>
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
-            <view v-if="false" class="button"> 模拟发货 </view>
+            <view
+              v-if="isDev && order.orderState == OrderState.DaiFaHuo"
+              @tap="onOrderSend"
+              class="button"
+            >
+              模拟发货
+            </view>
+            <!-- 待收货状态: 展示确认收货按钮 -->
+            <view
+              v-if="order.orderState === OrderState.DaiShouHuo"
+              @tap="onOrderConfirm"
+              class="button"
+            >
+              确认收货
+            </view>
           </view>
         </template>
       </view>
